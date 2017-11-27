@@ -45,9 +45,14 @@ def arg_move(cli_args):
 
     board = backlog_board()
 
+    list_name = cli_args.list_name
+
     try:
-        destination_list = [_ for _ in board.list_lists() if _.name == cli_args.list_name][0]
+        destination_list = [_ for _ in board.list_lists() if _.name.lower().startswith(list_name.lower())][0]
     except IndexError:
+        if len(destination_list) > 1:
+
+            print(f'{colorama.Fore.RED}More than one list matching string {list_name}')
         print(f'{colorama.Fore.RED}Destination list not found')
         return
 
