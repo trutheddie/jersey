@@ -1,7 +1,7 @@
 """Main module for Jersey CLI"""
 import argparse
 import sys
-from card import arg_comment, arg_move, arg_show, arg_add
+from card import arg_comment, arg_move, arg_show, arg_add, arg_done
 from label import arg_list_labels
 from worklist import arg_list, arg_sort, display_active_lists
 
@@ -28,6 +28,11 @@ def main():
     move_parser.add_argument('card_id', help='card to move')
     move_parser.add_argument('list_name', help='list to move card to')
     move_parser.set_defaults(func=arg_move)
+
+    # move a card to done
+    done_parser = subparsers.add_parser('done', help='move a card to done')
+    done_parser.add_argument('card_id', help='card to complete')
+    done_parser.set_defaults(func=arg_done)
 
     # add a card
     add_parser = subparsers.add_parser('add', help='add a new card')

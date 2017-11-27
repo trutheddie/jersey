@@ -63,6 +63,10 @@ def arg_move(cli_args):
 
     card.change_list(destination_list.id)
 
+def arg_done(cli_args):
+    cli_args.list_name = 'Done'
+    arg_move(cli_args)
+
 def arg_comment(cli_args):
     """Add a comment to a card"""
 
