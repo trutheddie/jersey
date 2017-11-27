@@ -12,24 +12,24 @@ fi)
 BIN_NAME=nj
 INSTALL_DIR=/usr/local/bin
 CWD=$(shell pwd)
+VENV_PYTHON=${CWD}/venv/bin/python
 
 install: dev
 	@if [ -f ${INSTALL_DIR}/${BIN_NAME} ] ; then \
-			rm ${INSTALL_DIR}/${BIN_NAME}; \
+			sudo rm ${INSTALL_DIR}/${BIN_NAME}; \
 	fi
 
-	@echo -e '#!/bin/bash\n' > ${INSTALL_DIR}/${BIN_NAME}
-	@echo '. ${CWD}/venv/bin/activate' >> ${INSTALL_DIR}/${BIN_NAME}
-	@echo 'python ${CWD}/nj/nj.py "$$@"' >> ${INSTALL_DIR}/${BIN_NAME}
-	@chmod 755 ${INSTALL_DIR}/${BIN_NAME}
-	@echo ... installation complete ...
+	@sudo /bin/bash -c "echo -e '#!/bin/bash\n' >> ${INSTALL_DIR}/${BIN_NAME} && \
+		echo '${VENV_PYTHON} ${CWD}/nj/nj.py \"\$$@\"' >> '${INSTALL_DIR}/${BIN_NAME}' && \
+		chmod 755 '${INSTALL_DIR}/${BIN_NAME}'"
+	echo ... installation complete ...
 
 dev: clean
 	@echo "creating virtual environment"
-	@${PYTHON3_BIN} -m venv venv
-	@. venv/bin/activate; \
+	${PYTHON3_BIN} -m venv venv
+	ls venv
 	echo "installing dependencies"; \
-	pip install -r requirements.txt
+	${VENV_PYTHON} -m pip install -r requirements.txt
 
 clean:
 	@echo "cleaning dev environment"
