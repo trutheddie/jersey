@@ -5,10 +5,21 @@ import colorama
 from trelloutil import backlog_board, format_due_date, CARD_ID_POSTFIX_COUNT
 from label import label_name_with_color
 
+class TrelloList:
+    def __init__(self, name, collapsed=False):
+        self.collapsed = collapsed
+        self.name = name
+
+    def __str__(self):
+        return self.name
+
+    def __len__(self):
+        return len(self.name)
+
 def display_active_lists():
     """Display all active lists"""
 
-    active_lists = ['doing', 'blocked', 'need_to_do']
+    active_lists = [TrelloList('Backlog'), TrelloList('On Deck Queue (3)'), TrelloList('In Progress (WIP 1)'), TrelloList('Done', collapsed=True)]
 
     for active_list in active_lists:
         print(f'{colorama.Style.BRIGHT}{colorama.Fore.YELLOW}{active_list}')
@@ -16,11 +27,17 @@ def display_active_lists():
         display_list(active_list)
         print()
 
-def display_list(list_name):
+def display_list(trello_list):
     board = backlog_board()
 
     lists = board.list_lists()
-    input_list = [_ for _ in lists if _.name == list_name][0]
+    input_list = [_ for _ in lists if _.name == trello_list.name][0]
+
+    cards = input_list.list_cards()
+    if trello_list.collapsed:
+        count = len(cards)
+        print(f'({count}) cards')
+        return
 
     for card in sorted(
             input_list.list_cards(),
@@ -54,8 +71,8 @@ def sort_list(trello_list):
 
     # pylint: disable=line-too-long
     for idx, card in enumerate(sorted(
-            trello_list.list_cards(),
-            key=lambda card: card.due_date if card.due_date else datetime.datetime.max.replace(tzinfo=pytz.UTC))):
+        trello_list.list_cards(),
+        key=lambda card: card.due_date if card.due_date else datetime.datetime.max.replace(tzinfo=pytz.UTC))):
         target_pos = min_pos + (idx * (max_pos - min_pos) / (len_cards - 1))
         if card.pos != target_pos:
             card.set_pos(target_pos)
