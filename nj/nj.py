@@ -1,7 +1,7 @@
 """Main module for Jersey CLI"""
 import argparse
 import sys
-from card import arg_comment, arg_move, arg_show, arg_add, arg_done
+from card import arg_comment, arg_move, arg_show, arg_add, arg_done, arg_start
 from label import arg_list_labels
 from worklist import arg_list, arg_sort, display_active_lists
 
