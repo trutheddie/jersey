@@ -34,6 +34,11 @@ def main():
     done_parser.add_argument('card_id', help='card to complete')
     done_parser.set_defaults(func=arg_done)
 
+    # move a card to in progress
+    start_parser = subparsers.add_parser('start', help='move a card to in progress')
+    start_parser.add_argument('card_id', help='card to start')
+    start_parser.set_defaults(func=arg_start)
+
     # add a card
     add_parser = subparsers.add_parser('add', help='add a new card')
     add_parser.add_argument('card_name', help='card name and content')

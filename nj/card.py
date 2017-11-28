@@ -5,6 +5,9 @@ from label import parse_labels
 from trelloutil import format_due_date, backlog_board, parse_new_due_date, CARD_ID_POSTFIX_COUNT
 from worklist import sort_list
 
+def list_name_partially_matches(list_name, partial_name):
+    return list_name.lower().startswith(partial_name.lower())
+
 def card_by_id(card_id_postfix, board):
     """Retrieve a card by the last few digits of its id"""
 
@@ -46,13 +49,13 @@ def arg_move(cli_args):
     board = backlog_board()
 
     list_name = cli_args.list_name
-
     try:
-        destination_list = [_ for _ in board.list_lists() if _.name.lower().startswith(list_name.lower())][0]
-    except IndexError:
+        destination_list = [_ for _ in board.list_lists() if list_name_partially_matches(_.name, list_name)]
         if len(destination_list) > 1:
-
             print(f'{colorama.Fore.RED}More than one list matching string {list_name}')
+            return
+        destination_list = destination_list[0]
+    except IndexError:
         print(f'{colorama.Fore.RED}Destination list not found')
         return
 
@@ -62,6 +65,10 @@ def arg_move(cli_args):
         return
 
     card.change_list(destination_list.id)
+
+def arg_start(cli_args):
+    cli_args.list_name = 'In Progress'
+    arg_move(cli_args)
 
 def arg_done(cli_args):
     cli_args.list_name = 'Done'
@@ -82,7 +89,7 @@ def arg_add(cli_args):
     try:
         destination_list = [
             _ for _ in backlog_board().list_lists()
-            if _.name == cli_args.list_name
+            if list_name_partially_matches(_.name, cli_args.list_name)
         ][0]
     except IndexError:
         print(f'{colorama.Fore.RED}Error searching for list')
